@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 300
     steps:
       - name: Checkout
@@ -18,8 +18,14 @@ jobs:
 
       - name: Toolchain
         run: |
-          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          # 官方发版要求 Xcode 27.0（iOS 27.0 SDK），这里优先挑它。
+          if [ -d /Applications/Xcode_27.app ]; then
+            sudo xcode-select -s /Applications/Xcode_27.app/Contents/Developer
+          else
+            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          fi
           xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
 
       - name: Free disk space check
         run: df -h /
