@@ -76,7 +76,9 @@ final class M0DiagnosticsModel: ObservableObject {
             bootstrapStatus = "Local schema v\(DatabaseManager.currentSchemaVersion) ready"
 
             do {
-                try await engine.configure(container: CKContainer.default())
+                if FileManager.default.ubiquityIdentityToken != nil {
+                    try await engine.configure(container: CKContainer.default())
+                }
                 syncStatus = Self.describe(await engine.status)
             } catch {
                 syncStatus = "CloudKit unavailable: \(error.localizedDescription)"
