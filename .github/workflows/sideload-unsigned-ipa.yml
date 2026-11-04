@@ -21,9 +21,10 @@ jobs:
 
       - name: Toolchain
         run: |
-          # 官方发版要求 Xcode 27.0（iOS 27.0 SDK），这里优先挑它。
-          if [ -d /Applications/Xcode_27.app ]; then
-            sudo xcode-select -s /Applications/Xcode_27.app/Contents/Developer
+          # 代码用到了 iOS 27.1 SDK 的可折叠设备 API（ReservedRegion / onHingeChange），
+          # 27.0 会编译失败；官方发布的 ipa 也是 iphoneos27.1 构建的。
+          if [ -d /Applications/Xcode_27.1.app ]; then
+            sudo xcode-select -s /Applications/Xcode_27.1.app/Contents/Developer
           else
             sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           fi
