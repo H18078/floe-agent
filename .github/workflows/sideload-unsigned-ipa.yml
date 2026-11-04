@@ -1,0 +1,98 @@
+name: Sideload unsigned IPA
+
+# 从源码构建可自签名的未签名 IPA（不带任何 entitlements）。
+# 目的是让没有付费开发者账号的用户也能装一个能启动的版本。
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 300
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
+
+      - name: Toolchain
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Free disk space check
+        run: df -h /
+
+      - name: Install build tools
+        run: brew install xcodegen automake cmake
+
+      - name: Bootstrap pinned native components
+        working-directory: FloeAgent
+        run: |
+          if [ -f ThirdParty/FloeCADKit/bootstrap.py ]; then
+            env -u FLOECAD_LOCAL_RELINK python3 ThirdParty/FloeCADKit/bootstrap.py
+          fi
+          scripts/bootstrap_native_components.sh
+
+      - name: Generate Xcode project
+        working-directory: FloeAgent
+        run: scripts/gen_project.sh
+
+      - name: Fetch bundled fonts
+        working-directory: FloeAgent
+        run: |
+          python3 scripts/fonts/fetch_fonts.py --check || {
+            python3 scripts/fonts/fetch_fonts.py
+            python3 scripts/fonts/fetch_fonts.py --check
+          }
+
+      - name: Build (no code signing)
+        working-directory: FloeAgent
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project FloeAgent.xcodeproj \
+            -scheme FloeAgent \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            build > build.log 2>&1 || { tail -n 300 build.log; exit 1; }
+          tail -n 40 build.log
+
+      - name: Package unsigned IPA
+        working-directory: FloeAgent
+        run: |
+          set -euo pipefail
+          APP_PATH="$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name '*.app' | head -1)"
+          echo "App: $APP_PATH"
+          rm -rf dist && mkdir -p dist/Payload
+          cp -R "$APP_PATH" dist/Payload/
+          cd dist
+          zip -qry FloeAgent-unsigned.ipa Payload
+          ls -lh FloeAgent-unsigned.ipa
+          shasum -a 256 FloeAgent-unsigned.ipa
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: FloeAgent-unsigned-ipa
+          path: FloeAgent/dist/FloeAgent-unsigned.ipa
+          retention-days: 30
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: floe-build-log
+          path: FloeAgent/build.log
+          retention-days: 7
+          if-no-files-found: ignore
