@@ -18,26 +18,6 @@
         "upstreamPath": "ThirdParty/OCCT.xcframework/ios-arm64/libOCCT-OS64.a",
         "oid": "b4abdbf22f704cfad0be3e67a686f727cc9bb0429d09dbef2153728b81850b50",
         "oidAlgorithm": "sha256"
-      },
-      "derivation": {
-        "id": "occt-guided-contact-continuation-v1",
-        "recipe": "relink/derivations/guided-contact.v1.json",
-        "recipeSha256": "3063f3adb282d71154b332ddd9cfd85c69f747a29fc605188609b7e496225039",
-        "receiptPath": "Vendor/OCCT.xcframework/ios-arm64/libOCCT-OS64.a.derivation.json",
-        "expectedResult": {
-          "size": 149086744,
-          "sha256": "698e685bb050fd03523a3f32bb2f050041fec5b5549e36c377533ce8f159ef87"
-        },
-        "parent": {
-          "id": "occt-standard-type-lifetime-v1",
-          "recipe": "relink/derivations/standard-type-lifetime.v1.json",
-          "recipeSha256": "d375d63871a53c2efb72047d8ebc2864c834b53c9d686da6943cab23968992f8",
-          "receiptPath": "Vendor/OCCT.xcframework/ios-arm64/libOCCT-OS64.a.derivation.json",
-          "expectedResult": {
-            "size": 149038056,
-            "sha256": "bb43f464af9162fde65b667414ba340dfd79b170cff7287688ec97d44db9b067"
-          }
-        }
       }
     },
     {
@@ -52,26 +32,6 @@
         "upstreamPath": "ThirdParty/OCCT.xcframework/ios-arm64-simulator/libOCCT-SIMULATORARM64.a",
         "oid": "a46899cb51e03fcf57c159bfca2b99e2931b2fdfbd457fd2e1074c19c2b4b087",
         "oidAlgorithm": "sha256"
-      },
-      "derivation": {
-        "id": "occt-guided-contact-continuation-v1",
-        "recipe": "relink/derivations/guided-contact.v1.json",
-        "recipeSha256": "3063f3adb282d71154b332ddd9cfd85c69f747a29fc605188609b7e496225039",
-        "receiptPath": "Vendor/OCCT.xcframework/ios-arm64-simulator/libOCCT-SIMULATORARM64.a.derivation.json",
-        "expectedResult": {
-          "size": 147236896,
-          "sha256": "749d562a70f36822c332c0d0b71714a7564e6391d2ca284f668eb2b673e8d1f9"
-        },
-        "parent": {
-          "id": "occt-standard-type-lifetime-v1",
-          "recipe": "relink/derivations/standard-type-lifetime.v1.json",
-          "recipeSha256": "d375d63871a53c2efb72047d8ebc2864c834b53c9d686da6943cab23968992f8",
-          "receiptPath": "Vendor/OCCT.xcframework/ios-arm64-simulator/libOCCT-SIMULATORARM64.a.derivation.json",
-          "expectedResult": {
-            "size": 147188808,
-            "sha256": "06a284928c1fe1c7c516e8eb629ee9b022b3505403045d29f346ffdcb1c0ed7e"
-          }
-        }
       }
     }
   ],
