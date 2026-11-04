@@ -9,6 +9,9 @@ jobs:
   build:
     runs-on: xcode-27
     timeout-minutes: 300
+    env:
+      # bootstrap_office_host.py 用 gh 从上流仓库拉取预编译 Office host
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
