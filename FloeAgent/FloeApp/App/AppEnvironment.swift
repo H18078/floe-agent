@@ -2826,7 +2826,12 @@ final class AppEnvironment: ObservableObject {
                 await configurationSync.setSynchronizationEnabled(
                     syncPreferences.overallEnabled && syncPreferences.configurationEnabled
                 )
-                try await configurationSync.configure(container: CKContainer.default())
+                // 缺少 com.apple.developer.icloud-container-identifiers（免费 Apple ID
+                // 自签名必然如此）时 CKContainer.default() 会抛 Objective-C 异常，
+                // Swift 的 do/catch 接不住，进程直接 SIGABRT。先探测再调用。
+                if FileManager.default.ubiquityIdentityToken != nil {
+                    try await configurationSync.configure(container: CKContainer.default())
+                }
                 // Never hold the launch UI behind CloudKit. The root view
                 // performs a short, bounded second check before presenting
                 // first-run setup, while this pull continues independently.
